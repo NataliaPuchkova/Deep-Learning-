@@ -1,6 +1,6 @@
 
-CS231n Convolutional Neural Networks for Visual Recognition
-Python Numpy Tutorial
+## CS231n Convolutional Neural Networks for Visual Recognition
+### Python Numpy Tutorial
 
 This tutorial was contributed by Justin Johnson.
 
