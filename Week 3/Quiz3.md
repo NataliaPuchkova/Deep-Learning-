@@ -1,61 +1,90 @@
-## Week 3 Quiz - Hyperparameter tuning, Batch Normalization, Programming Frameworks
+## Week 3 Quiz -  Shallow Neural Networks
 
-1. If searching among a large number of hyperparameters, you should try values in a grid rather than random values, so that you can carry out the search more systematically and not rely on chance. True or False?
+1. Which of the following are true? (Check all that apply.) **Notice that I only list correct options.**
 
-    - [x] False
-    - [ ] True
+    - X is a matrix in which each column is one training example.
+    - a^[2]_4 is the activation output by the 4th neuron of the 2nd layer
+    - a^\[2\](12) denotes the activation vector of the 2nd layer for the 12th training example.
+    - a^[2] denotes the activation vector of the 2nd layer.
     
-    Note: Try random values, don't do grid search. Because you don't know which hyperparamerters are more important than others.
-    
-    >  And to take an extreme example, let's say that hyperparameter two was that value epsilon that you have in the denominator of the Adam algorithm. So your choice of alpha matters a lot and your choice of epsilon hardly matters.
-    
-2. Every hyperparameter, if set poorly, can have a huge negative impact on training, and so all hyperparameters are about equally important to tune well. True or False?
+    Note: If you are not familiar with the notation used in this course, check [here](https://www.coursera.org/learn/neural-networks-deep-learning/resources/YsZjP).
 
-    - [x] False
-    - [ ] True
-    
-    > We've seen in lecture that some hyperparameters, such as the learning rate, are more critical than others.
-    
-3. During hyperparameter search, whether you try to babysit one model (“Panda” strategy) or train a lot of models in parallel (“Caviar”) is largely determined by:
+2. The tanh activation usually works better than sigmoid activation function for hidden units because the mean of its output is closer to zero, and so it centers the data better for the next layer. True/False?
 
-    - [ ] Whether you use batch or mini-batch optimization
-    - [ ] The presence of local minima (and saddle points) in your neural network
-    - [x] The amount of computational power you can access
-    - [ ] The number of hyperparameters you have to tune
+    - [x] True
+    - [ ] False
+    
+    Note: You can check [this post](https://stats.stackexchange.com/a/101563/169377) and (this paper)[http://yann.lecun.com/exdb/publis/pdf/lecun-98b.pdf].
+    
+    > As seen in lecture the output of the tanh is between -1 and 1, it thus centers the data which makes the learning simpler for the next layer.
+    
+3. Which of these is a correct vectorized implementation of forward propagation for layer l, where 1≤l≤L?
 
-4. If you think β (hyperparameter for momentum) is between on 0.9 and 0.99, which of the following is the recommended way to sample a value for beta?
+    - Z^[l]=W^[l]A^[l−1]+b^[l]
+    - A^[l]=g^\[l](Z^[l])
+
+4. You are building a binary classifier for recognizing cucumbers (y=1) vs. watermelons (y=0). Which one of these activation functions would you recommend using for the output layer?
+
+    - [ ] ReLU
+    - [ ] Leaky ReLU
+    - [x] sigmoid
+    - [ ] tanh
+    
+    Note: The output value from a sigmoid function can be easily understood as a probability.
+    
+    > Sigmoid outputs a value between 0 and 1 which makes it a very good choice for binary classification. You can classify as 0 if the output is less than 0.5 and classify as 1 if the output is more than 0.5. It can be done with tanh as well but it is less convenient as the output is between -1 and 1.
+    
+5. Consider the following code:
 
     ```
-    r = np.random.rand()
-    beta = 1 - 10 ** (-r - 1)
+    A = np.random.randn(4,3)
+    B = np.sum(A, axis = 1, keepdims = True)
     ```
+    
+    What will be B.shape?
+    
+    `B.shape = (4, 1)`
+    
+    >  we use (keepdims = True) to make sure that A.shape is (4,1) and not (4, ). It makes our code more rigorous.
 
-5. Finding good hyperparameter values is very time-consuming. So typically you should do it once at the start of the project, and try to find very good hyperparameters so that you don’t ever have to revisit tuning them again. True or false?
+6. Suppose you have built a neural network. You decide to initialize the weights and biases to be zero. Which of the following statements are True? (Check all that apply)
 
-    - [x] False
+    - [x] Each neuron in the first hidden layer will perform the same computation. So even after multiple iterations of gradient descent each neuron in the layer will be computing the same thing as other neurons.
+    - [ ] Each neuron in the first hidden layer will perform the same computation in the first iteration. But after one iteration of gradient descent they will learn to compute different things because we have “broken symmetry”.
+    - [ ] Each neuron in the first hidden layer will compute the same thing, but neurons in different layers will compute different things, thus we have accomplished “symmetry breaking” as described in lecture.
+    - [ ] The first hidden layer’s neurons will perform different computations from each other even in the first iteration; their parameters will thus keep evolving in their own way.
+    
+7. Logistic regression’s weights w should be initialized randomly rather than to all zeros, because if you initialize to all zeros, then logistic regression will fail to learn a useful decision boundary because it will fail to “break symmetry”, True/False?
+
     - [ ] True
+    - [x] False
     
-    Note: Minor changes in your model could potentially need you to find good hyperparameters again from scratch.
-    
-6. In batch normalization as presented in the videos, if you apply it on the lth layer of your neural network, what are you normalizing?
+    >  Logistic Regression doesn't have a hidden layer. If you initialize the weights to zeros, the first example x fed in the logistic regression will output zero but the derivatives of the Logistic Regression depend on the input x (because there's no hidden layer) which is not zero. So at the second iteration, the weights values follow x's distribution and are different from each other if x is not a constant vector.
 
-    - z^[l]
-    
-7. In the normalization formula, why do we use epsilon?
+8. You have built a network using the tanh activation for all the hidden units. You initialize the weights to relative large values, using np.random.randn(..,..)*1000. What will happen?
 
-    - To avoid division by zero
-    
-8. Which of the following statements about γ and β in Batch Norm are true? **Only correct options listed**
+    - [ ] It doesn’t matter. So long as you initialize the weights randomly gradient descent is not affected by whether the weights are large or small.
 
-    - They can be learned using Adam, Gradient descent with momentum, or RMSprop, not just with gradient descent.
-    - They set the mean and variance of the linear variable z^[l] of a given layer.
-    
-9. After training a neural network with Batch Norm, at test time, to evaluate the neural network on a new example you should:
+    - [ ] This will cause the inputs of the tanh to also be very large, thus causing gradients to also become large. You therefore have to set α to be very small to prevent divergence; this will slow down learning.
 
-    - Perform the needed normalizations, use μ and σ^2 estimated using an exponentially weighted average across mini-batches seen during training.
-    
-10. Which of these statements about deep learning programming frameworks are true? (Check all that apply)
+    - [ ] This will cause the inputs of the tanh to also be very large, causing the units to be “highly activated” and thus speed up learning compared to if the weights had to start from small values.
 
-    - [x] A programming framework allows you to code up deep learning algorithms with typically fewer lines of code than a lower-level language such as Python.
-    - [x] Even if a project is currently open source, good governance of the project helps ensure that the it remains open even in the long term, rather than become closed or modified to benefit only one company.
-    - [ ] Deep learning programming frameworks require cloud-based machines to run.
+    - [x] This will cause the inputs of the tanh to also be very large, thus causing gradients to be close to zero. The optimization algorithm will thus become slow.
+
+
+    > tanh becomes flat for large values, this leads its gradient to be close to zero. This slows down the optimization algorithm.
+    
+9. Consider the following 1 hidden layer neural network:
+
+    - b[1] will have shape (4, 1)
+    - W[1] will have shape (4, 2)
+    - W[2] will have shape (1, 4)
+    - b[2] will have shape (1, 1)
+    
+    Note: Check [here](https://user-images.githubusercontent.com/14886380/29200515-7fdd1548-7e88-11e7-9d05-0878fe96bcfa.png) for general formulas to do this.
+    
+10. In the same network as the previous question, what are the dimensions of Z^[1] and A^[1]?
+
+    - Z[1] and A[1] are (4,m)
+    
+    Note: Check [here](https://user-images.githubusercontent.com/14886380/29200515-7fdd1548-7e88-11e7-9d05-0878fe96bcfa.png) for general formulas to do this.
